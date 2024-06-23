@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -ueo pipefail
 
-VERSION="4.0.0"
+VERSION="4.0.1"
 PACMAN="${PAC_PACMAN:-"pacman"}"
 
 if [[ "$PACMAN" == "pacman" ]] && (( EUID != 0 )); then
@@ -15,14 +15,14 @@ help() {
 A pacman wrapper that provides intuitive syntax
 
 Usage:
-  pac <command> [option(s)] [target(s)]
-  pac [option]
+  pak <command> [option(s)] [target(s)]
+  pak [option]
 
 Commands:
-  install, in           Install packages and their dependencies
-  remove, rm            Remove packages and their dependencies
-  autoremove, arm       Remove dependencies that are no longer needed
-  clean                 Remove old packages from cache
+  add                   Install packages and their dependencies
+  del                   Remove packages and their dependencies
+  clean                 Remove dependencies that are no longer needed
+  purge                 Remove old packages from cache
   upgrade, up           Sync databases and upgrade installed packages
   search, se            Search package names and descriptions
   info, if              Show information about packages or groups
@@ -36,34 +36,31 @@ General options:
   -V, --version         Print version information
   -s, --status          Print what pac is wrapping
 
-Run 'pac <command> --help' for more information on a specific command.
+Run 'pak <command> --help' for more information on a specific command.
 
-If no arguments are provided, 'pac upgrade' will be performed.
+If no arguments are provided, 'pak upgrade' will be performed.
 EOF
 }
 
 version() {
-  echo "pac $VERSION"
+  echo "pak $VERSION"
 }
 
 status() {
   cat << EOF
-pac is wrapping '$PACMAN'.
+pak is wrapping '$PACMAN'.
 
 To wrap another pacman-compatible program, set the environment variable
 'PAC_PACMAN'.
 EOF
 }
 
-install::help() {
+add::help() {
   cat << EOF
 Install packages and their dependencies
 
 Usage:
-  pac install [option(s)] <package(s)>
-
-Alias:
-  in
+  pak add [option(s)] <package(s)>
 
 Options:
   --asdeps              Install packages as dependencies
@@ -77,9 +74,9 @@ General option:
 EOF
 }
 
-install() {
+add() {
   local cmdname shortopts longopts args opts
-  cmdname="pac install"
+  cmdname="pak add"
   shortopts="yh"
   longopts="asdeps,asexplicit,needed,overwrite:,yes,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
@@ -101,7 +98,7 @@ install() {
         shift
         ;;
       -h|--help)
-        install::help
+        add::help
         exit
         ;;
       --)
@@ -114,15 +111,12 @@ install() {
   "${SUDO_PACMAN[@]}" -S "${opts[@]}" "$@"
 }
 
-remove::help() {
+del::help() {
   cat << EOF
 Remove packages and their dependencies
 
 Usage:
-  pac remove [option(s)] <package(s)>
-
-Alias:
-  rm
+  pak del [option(s)] <package(s)>
 
 Options:
   -c, --cascade         Remove also dependent packages
@@ -135,9 +129,9 @@ General option:
 EOF
 }
 
-remove() {
+del() {
   local cmdname shortopts longopts args opts
-  cmdname="pac remove"
+  cmdname="pak del"
   shortopts="cunyh"
   longopts="cascade,unneeded,nosave,yes,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
@@ -155,7 +149,7 @@ remove() {
         shift
         ;;
       -h|--help)
-        remove::help
+        del::help
         exit
         ;;
       --)
@@ -168,15 +162,12 @@ remove() {
   "${SUDO_PACMAN[@]}" -Rs "${opts[@]}" "$@"
 }
 
-autoremove::help() {
+clean::help() {
   cat << EOF
 Remove dependencies that are no longer needed
 
 Usage:
-  pac autoremove [option(s)] [package(s)]
-
-Alias:
-  arm
+  pak clean [option(s)] [package(s)]
 
 Options:
   -n, --nosave          Remove also configuration files
@@ -187,9 +178,9 @@ General option:
 EOF
 }
 
-autoremove() {
+clean() {
   local cmdname shortopts longopts args opts pkgs
-  cmdname="pac autoremove"
+  cmdname="pak clean"
   shortopts="nyh"
   longopts="nosave,yes,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
@@ -207,7 +198,7 @@ autoremove() {
         shift
         ;;
       -h|--help)
-        autoremove::help
+        clean::help
         exit
         ;;
       --)
@@ -226,12 +217,12 @@ autoremove() {
   fi
 }
 
-clean::help() {
+purge::help() {
   cat << EOF
 Remove old packages from cache
 
 Usage:
-  pac clean [option(s)]
+  pak purge [option(s)]
 
 Options:
   -a, --all             Remove all packages from cache
@@ -242,9 +233,9 @@ General option:
 EOF
 }
 
-clean() {
+purge() {
   local cmdname shortopts longopts args opts
-  cmdname="pac clean"
+  cmdname="pak purge"
   shortopts="ayh"
   longopts="all,yes,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
@@ -262,7 +253,7 @@ clean() {
         shift
         ;;
       -h|--help)
-        clean::help
+        purge::help
         exit
         ;;
       --)
@@ -280,7 +271,7 @@ upgrade::help() {
 Sync databases and upgrade installed packages
 
 Usage:
-  pac upgrade [option(s)]
+  pak upgrade [option(s)]
 
 Alias:
   up
@@ -298,7 +289,7 @@ EOF
 
 upgrade() {
   local cmdname shortopts longopts args opts
-  cmdname="pac upgrade"
+  cmdname="pak upgrade"
   shortopts="yh"
   longopts="ignore:,ignoregroup:,overwrite:,yes,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
@@ -334,7 +325,7 @@ search::help() {
 Search package names and descriptions
 
 Usage:
-  pac search [option(s)] <keyword(s)>
+  pak search [option(s)] <keyword(s)>
 
 Alias:
   se
@@ -386,7 +377,7 @@ info::help() {
 Show information about packages or groups
 
 Usage:
-  pac info [option(s)] <package(s)>
+  pak info [option(s)] <package(s)>
 
 Alias:
   if
@@ -402,7 +393,7 @@ EOF
 
 info() {
   local cmdname shortopts longopts args pkg_opts grp_opts arg output ist_pkgs ist_pkg sed_opts ret
-  cmdname="pac info"
+  cmdname="pak info"
   shortopts="eqh"
   longopts="extended,quiet,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
@@ -474,7 +465,7 @@ owner::help() {
 Query packages that own the specified files
 
 Usage:
-  pac owner [option(s)] <file(s)>
+  pak owner [option(s)] <file(s)>
 
 Options:
   -q, --quiet           Show less information
@@ -486,7 +477,7 @@ EOF
 
 owner() {
   local cmdname shortopts longopts args
-  cmdname="pac owner"
+  cmdname="pak owner"
   shortopts="qh"
   longopts="quiet,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
@@ -518,7 +509,7 @@ files::help() {
 List files owned by the specified packages
 
 Usage:
-  pac files [option(s)] <package(s)>
+  pak files [option(s)] <package(s)>
 
 Options:
   -q, --quiet           Show less information
@@ -530,7 +521,7 @@ EOF
 
 files() {
   local cmdname shortopts longopts args opts arg ret
-  cmdname="pac files"
+  cmdname="pak files"
   shortopts="qh"
   longopts="quiet,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
@@ -578,7 +569,7 @@ mark::help() {
 Mark packages as explicitly installed
 
 Usage:
-  pac mark [option] <package(s)>
+  pak mark [option] <package(s)>
 
 Options:
   -d, --asdeps          Mark packages as dependencies
@@ -590,7 +581,7 @@ EOF
 
 mark() {
   local cmdname shortopts longopts args opts
-  cmdname="pac mark"
+  cmdname="pak mark"
   shortopts="dh"
   longopts="asdeps,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
@@ -622,7 +613,7 @@ list::help() {
 List installed packages
 
 Usage:
-  pac list [option(s)] [package(s)]
+  pak list [option(s)] [package(s)]
 
 Alias:
   ls
@@ -641,7 +632,7 @@ EOF
 
 list() {
   local cmdname shortopts longopts args opts
-  cmdname="pac list"
+  cmdname="pak list"
   shortopts="ednfqh"
   longopts="explicit,deps,native,foreign,quiet,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
@@ -679,21 +670,21 @@ main() {
       shift || true
       upgrade "$@"
       ;;
-    in|install)
+    add)
       shift
-      install "$@"
+      add "$@"
       ;;
-    rm|remove)
+    del)
       shift
-      remove "$@"
-      ;;
-    arm|autoremove)
-      shift
-      autoremove "$@"
+      del "$@"
       ;;
     clean)
       shift
       clean "$@"
+      ;;
+    purge)
+      shift
+      purge "$@"
       ;;
     se|search)
       shift
