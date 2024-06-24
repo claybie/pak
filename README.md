@@ -1,6 +1,6 @@
 # Pak
 
-Pak is an AUR helper wrapper, intended for use specifically with `paru`, with syntax in the style of the package manager `apk` used on Alpine and Chimera Linux (hence the name "pak" for "paru's alpine kidnapper). 
+Pak is an AUR helper wrapper, intended for use specifically with `paru`, with syntax in the style of the package manager `apk` used on Alpine and Chimera Linux (hence the name "pak" or "paru's alpine kidnapper"). 
 
 It is itself a fork of [pac-wrapper](https://github.com/eatsu/pac-wrapper).
 
