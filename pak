@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -ueo pipefail
 
-VERSION="4.0.1"
-PACMAN="${PAC_PACMAN:-"pacman"}"
+VERSION="1.0.1"
+PACMAN="${PAC_PACMAN:-"paru"}"
 
 if [[ "$PACMAN" == "pacman" ]] && (( EUID != 0 )); then
   SUDO_PACMAN=("sudo" "$PACMAN")
@@ -12,7 +12,7 @@ fi
 
 help() {
   cat << EOF
-A pacman wrapper that provides intuitive syntax
+A paru/pacman wrapper that provides apk-style syntax
 
 Usage:
   pak <command> [option(s)] [target(s)]
@@ -23,13 +23,13 @@ Commands:
   del                   Remove packages and their dependencies
   clean                 Remove dependencies that are no longer needed
   purge                 Remove old packages from cache
-  upgrade, up           Sync databases and upgrade installed packages
-  search, se            Search package names and descriptions
-  info, if              Show information about packages or groups
+  upgrade               Sync databases and upgrade installed packages
+  search                Search package names and descriptions
+  info                  Show information about packages or groups
   files                 List files owned by the specified packages
   owner                 Query packages that own the specified files
   mark                  Mark packages as explicitly installed
-  list, ls              List installed packages
+  list                  List installed packages
 
 General options:
   -h, --help            Print help information
@@ -273,9 +273,6 @@ Sync databases and upgrade installed packages
 Usage:
   pak upgrade [option(s)]
 
-Alias:
-  up
-
 Options:
   --ignore <package>    Ignore a package upgrade (can be used more than once)
   --ignoregroup <group> Ignore a group upgrade (can be used more than once)
@@ -327,9 +324,6 @@ Search package names and descriptions
 Usage:
   pak search [option(s)] <keyword(s)>
 
-Alias:
-  se
-
 Options:
   -i, --installed       Search only installed packages
   -q, --quiet           Show less information
@@ -341,7 +335,7 @@ EOF
 
 search() {
   local cmdname shortopts longopts args operation
-  cmdname="pac search"
+  cmdname="pak search"
   shortopts="iqh"
   longopts="installed,quiet,help"
   args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
@@ -614,9 +608,6 @@ List installed packages
 
 Usage:
   pak list [option(s)] [package(s)]
-
-Alias:
-  ls
 
 Options:
   -e, --explicit        List packages explicitly installed
