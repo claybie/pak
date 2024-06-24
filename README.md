@@ -1,6 +1,6 @@
 # Pak
 
-Pak is an AUR helper wrapper, intended for use specifically with `paru`, with syntax in the style of the package manager `apk` (hence the name "pak"). 
+Pak is an AUR helper wrapper, intended for use specifically with `paru`, with syntax in the style of the package manager `apk` used on Alpine and Chimera Linux (hence the name "pak" for "paru's alpine kidnapper). 
 
 It is itself a fork of [pac-wrapper](https://github.com/eatsu/pac-wrapper).
 
@@ -8,7 +8,7 @@ It is itself a fork of [pac-wrapper](https://github.com/eatsu/pac-wrapper).
 
 Command | Description
 :-- | :--
-`pak` | Upgrade installed packages.
+`pak upgrade` | Upgrade installed packages.
 `pak add foo` | Install package `foo` and its dependencies.
 `pak del foo` | Remove package `foo` and its dependencies.
 `pac info foo` | Show information about package or group `foo`.
