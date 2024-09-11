@@ -34,7 +34,7 @@ Commands:
 General options:
   -h, --help            Print help information
   -V, --version         Print version information
-  -s, --status          Print what pac is wrapping
+  -s, --status          Print what pak is wrapping
 
 Run 'pak <command> --help' for more information on a specific command.
 
