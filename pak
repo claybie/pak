@@ -29,7 +29,8 @@ Commands:
   files                 List files owned by the specified packages
   owner                 Query packages that own the specified files
   mark                  Mark packages as explicitly installed
-  list                  List installed packages
+  list                  List all installed packages
+  world                 List only explicitly installed packages (as would be in world file of Alpine etc.)
 
 General options:
   -h, --help            Print help information
@@ -621,6 +622,57 @@ General option:
 EOF
 }
 
+world::help() {
+  cat << EOF
+List packages explicitly installed
+
+Usage:
+  pak world [option(s)] [package(s)]
+
+Options:
+  -n, --native          List installed packages found in sync db(s)
+  -f, --foreign         List installed packages not found in sync db(s)
+  -q, --quiet           Show less information
+
+General option:
+  -h, --help            Print help information
+EOF
+}
+
+world() {
+  local cmdname shortopts longopts args opts
+  cmdname="pak world"
+  shortopts="nfqh"
+  longopts="native,foreign,quiet,help"
+  args="$(getopt -n "$cmdname" -o "$shortopts" -l "$longopts" -- "$@")" || exit
+
+  eval set -- "$args"
+
+  while true; do
+    case "$1" in
+      -n|--native|-q|--quiet)
+        opts+=("$1")
+        shift
+        ;;
+      # We use -f instead of -m
+      -f|--foreign)
+        opts+=("--foreign")
+        shift
+        ;;
+      -h|--help)
+        world::help
+        exit
+        ;;
+      --)
+        shift
+        break
+        ;;
+    esac
+  done
+
+  "$PACMAN" -Qe "${opts[@]}" "$@"
+}
+
 list() {
   local cmdname shortopts longopts args opts
   cmdname="pak list"
@@ -700,6 +752,10 @@ main() {
     ls|list)
       shift
       list "$@"
+      ;;
+    world)
+      shift
+      world "$@"
       ;;
     -h|--help)
       help
