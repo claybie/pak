@@ -7,7 +7,7 @@ _pac() {
     return
   elif (( cword == 1 )); then
     COMPREPLY=($(compgen -W 'in install rm remove arm autoremove clean
-      up upgrade se search if info files owner mark ls list' -- "$cur"))
+      up upgrade se search if info files owner mark ls list world' -- "$cur"))
     return
   fi
 
@@ -59,6 +59,10 @@ _pac() {
     list|ls)
       COMPREPLY=($(compgen -W '-h --help -e --explicit -d --deps -n --native
         -f --foreign -q --quiet' -- "$cur"))
+      return
+      ;;
+    world)
+      COMPREPLY=($(compgen -W '-h --help -n --native -f --foreign -q --quiet' -- "$cur"))
       return
       ;;
   esac

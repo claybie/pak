@@ -69,6 +69,12 @@ _pac() {
             "$_pac_list_options[@]" \
             && ret=0
           ;;
+        (world)
+          _arguments \
+            "$_pac_common_options[@]" \
+            "$_pac_world_options[@]" \
+            && ret=0
+          ;;
         (info|if)
           _arguments \
             "$_pac_common_options[@]" \
@@ -102,6 +108,7 @@ _pac_commands() {
     'owner:Query packages that own the specified files'
     'mark:Mark packages as explicitly installed'
     {list,ls}':List installed packages'
+    'world:List packages explicitly installed'
   )
 
   _describe -t commands 'command' commands "$@"
@@ -184,6 +191,13 @@ _pac_mark_options=(
 _pac_list_options=(
   '(-d --deps -e --explicit)'{-d,--deps}'[List packages installed as dependencies]'
   '(-d --deps -e --explicit)'{-e,--explicit}'[List packages explicitly installed]'
+  '(-f --foreign -n --native)'{-f,--foreign}'[List installed packages not found in sync db(s)]'
+  '(-f --foreign -n --native)'{-n,--native}'[List installed packages found in sync db(s)]'
+  '(-q --quiet)'{-q,--quiet}'[Show less information]'
+  '*: :_pac_installed_packages'
+)
+
+_pac_world_options=(
   '(-f --foreign -n --native)'{-f,--foreign}'[List installed packages not found in sync db(s)]'
   '(-f --foreign -n --native)'{-n,--native}'[List installed packages found in sync db(s)]'
   '(-q --quiet)'{-q,--quiet}'[Show less information]'
