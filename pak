@@ -30,7 +30,7 @@ Commands:
   owner                 Query packages that own the specified files
   mark                  Mark packages as explicitly installed
   list                  List all installed packages
-  world                 List packages explicitly installed
+  world                 List only explicitly installed packages (as would be in world file of Alpine etc.)
 
 General options:
   -h, --help            Print help information
